@@ -1,9 +1,8 @@
+from logger import log
 import motor.motor_asyncio
 from motor.core import AgnosticClient
-
-client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
-
-loop = client.get_io_loop()
+from settings import settings
+from typing import Dict
 
 
 class Session:
@@ -12,27 +11,18 @@ class Session:
         self.loop = client.get_io_loop()
         self.collection = client.forms.templates
 
-    async def _do_insert(self, form):
-        await self.collection.insert_one(form)
+    async def _do_insert(self, template: Dict) -> None:
+        await self.collection.insert_one(template)
+        log("Template added to `templates` collection", added=template)
 
-    async def _find_one(self, form):
-        print(form)
-        print({
-                key: {"$eq": value} for key, value in form.items()
-            })
-        result = await self.collection.find_one(
-            {
-                key: {"$eq": value} for key, value in form.items()
-            }
-        )
-        print(result)
-        return result if result else None
-
-    def do_insert(self, dict_):
-        self.loop.run_until_complete(self._do_insert(dict_))
-
-    def find_one(self, f):
-        return self.loop.run_until_complete(self._find_one(f))
+    async def _find_one(self, template: Dict) -> Dict | None:
+        result = await self.collection.find_one(template)
+        if result is None:
+            log("Template not found in `templates` collection")
+        else:
+            log("Template found in `templates` collection", found=result)
+        return result
 
 
+client = motor.motor_asyncio.AsyncIOMotorClient(settings.mongo.DATABASE_URL)
 session = Session(client=client)

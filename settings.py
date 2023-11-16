@@ -19,24 +19,18 @@ class AppDescription(BaseSettings):
     ]
 
 
+class MongoSettings(BaseSettings):
+
+    DATABASE_URL: str
+
+    class Config:
+        env_file = ".env"
+
+
 @lru_cache
 class Settings(BaseSettings):
-    app_description: Dict[str, str | bool | List[Dict[str, str]]] = AppDescription().model_dump()
+    app_description: Dict = AppDescription().model_dump()
+    mongo: InstanceOf[MongoSettings] = MongoSettings()
 
 
-settings = Settings().model_dump()
-
-
-# @lru_cache
-# class Settings(BaseSettings):
-#     """ Креды для БД подгружаются из .env """
-#     DB_USER: str
-#     DB_PASSWORD: str
-#     DB_SCHEMA: str
-#     DB_HOST: str
-#     DB_PORT: str
-#     DB_URL: str
-#     app_description: AppDescription = AppDescription()
-#
-#     class Config:
-#         env_file = ".env"
+settings = Settings()
