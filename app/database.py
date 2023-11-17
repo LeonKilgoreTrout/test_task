@@ -30,6 +30,6 @@ class Session:
 
 
 session = Session(
-    client=motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017"),
+    client=motor.motor_asyncio.AsyncIOMotorClient(settings.mongo.DATABASE_URL),
     collection="templates"
 )
