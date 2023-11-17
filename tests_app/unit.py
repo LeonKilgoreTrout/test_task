@@ -1,8 +1,6 @@
 from app.main import app
 from httpx import AsyncClient
 import pytest
-from app.database import session
-
 
 PSEUDO_URL = "http://test"
 
@@ -60,12 +58,5 @@ async def test_match(event_loop):
     case = "field_1=some@mail.com&field_2=+7 923 098 9023&field_3=Hello, world!&field_4=31.12.1998&field_5=2021-09-29"
     async with AsyncClient(app=app, base_url=PSEUDO_URL) as ac:
         response = await ac.post(f"/api/get_form/{case}")
-        # cursor = session.collection.find({})
-        # async for document in cursor:
-        #     print("3123")
-        #     print(document)
-        # # print()
-        # print("++++++++++++++++++++")
-        # print(response.json())
-
         assert len(response.json()) == 1
+        assert "template_name" in response.json().keys()

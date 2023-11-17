@@ -10,7 +10,6 @@ from typing import Dict
 class Session:
 
     def __init__(self, client: AgnosticClient, collection: str):
-        # self.loop = client.get_io_loop()
         self.collection_name = collection
         self.collection = client.forms[f"{collection}"]
 
@@ -31,6 +30,6 @@ class Session:
 
 
 session = Session(
-    client=motor.motor_asyncio.AsyncIOMotorClient(settings.mongo.DATABASE_URL),
+    client=motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017"),
     collection="templates"
 )

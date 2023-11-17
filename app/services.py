@@ -27,7 +27,7 @@ def _validate_params(params):
     param_pair = params.split("=")
     _validate_input_string(len(param_pair) == 2, PairAmbiguousError)
     name = param_pair[0]
-    _validate_input_string("name" != name, NameFieldIsNotAllowed)
+    _validate_input_string("template_name" != name, NameFieldIsNotAllowed)
     _validate_input_string(name.strip().replace("_", "").isalnum() & name[0].isalpha(), BadNamingError)
     return param_pair
 
