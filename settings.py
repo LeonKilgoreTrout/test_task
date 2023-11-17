@@ -21,6 +21,10 @@ class AppDescription(BaseSettings):
 
 class MongoSettings(BaseSettings):
 
+    MONGO_DB_ROOT_USERNAME: str
+    MONGO_DB_ROOT_PASSWORD: str
+    MONGO_DB_HOST: str
+    MONGO_DB_PORT: str
     DATABASE_URL: str
 
     class Config:

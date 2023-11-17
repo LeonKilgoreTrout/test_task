@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "test-app"
+name = "test_task"
 version = "0.1.0"
 description = "path query validator"
 authors = ["Your Name <you@example.com>"]
