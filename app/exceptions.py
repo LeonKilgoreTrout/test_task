@@ -5,7 +5,8 @@ __all__ = (
     "NoValueProvidedError",
     "PairAmbiguousError",
     "BadNamingError",
-    "RepeatingNameError"
+    "RepeatingNameError",
+    "NameFieldIsNotAllowed"
 )
 
 
@@ -35,3 +36,7 @@ class BadNamingError(ValidatorException):
 
 class RepeatingNameError(ValidatorException):
     """ Names must be unique """
+
+
+class NameFieldIsNotAllowed(ValidatorException):
+    """ Do not use `name` as a field name value"""

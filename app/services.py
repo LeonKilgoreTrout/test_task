@@ -1,10 +1,10 @@
 from typing import Dict, List, Type, Tuple
-from app_exceptions import *
-from database import session
+from app.exceptions import *
+from app.database import session
 from dataclasses import dataclass
 from uuid import uuid4
 from collections import OrderedDict
-from validator import Validator, ValidatedStr
+from app.validator import Validator, ValidatedStr
 
 
 @dataclass
@@ -27,6 +27,7 @@ def _validate_params(params):
     param_pair = params.split("=")
     _validate_input_string(len(param_pair) == 2, PairAmbiguousError)
     name = param_pair[0]
+    _validate_input_string("name" != name, NameFieldIsNotAllowed)
     _validate_input_string(name.strip().replace("_", "").isalnum() & name[0].isalpha(), BadNamingError)
     return param_pair
 
@@ -44,11 +45,9 @@ class Connector:
         self.validator = Validator()
         self.last_form = None
 
-    async def match_template_in_db(self, input_string: str) -> Dict[str, ValidatedStr | str | Dict]:
-        params_list = parse_string(input_string)
+    async def match_template_in_db(self, params_list: List[str]) -> Dict[str, ValidatedStr | str | Dict]:
         fields = []
         for params in params_list:
-
             try:
                 name, value = _validate_params(params)
             except ValidatorException as e:
@@ -85,8 +84,7 @@ class Connector:
         await self.session._do_insert(form)
 
     async def get_template(self, fields: Dict[str, str]) -> Dict[str, str] | None:
-        query = {'$or': [{key: {'$exists': True}} for key in fields.keys()]}
-        result = await self.session._find_one(query)
+        result = await self.session._find_one(fields)
         return result
 
 
