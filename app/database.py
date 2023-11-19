@@ -31,17 +31,17 @@ class Session:
     def drop(self):
         self.collection.delete_many({})
 
-    async def do_insert(self, template: Dict) -> None:
-        await self.collection.insert_one(template)
-        log(f"Template added to `{self.collection_name}` collection", added=template)
+    async def do_insert(self, form: Dict) -> None:
+        await self.collection.insert_one(form)
+        log(f"Template added to `{self.collection_name}` collection", added=form)
 
     async def find_all(self, template: Dict) -> Dict | None:
         match_list = []
         for field_, type_or_name in template.items():
             if field_ != "name":
                 results = self.collection.find({field_: {'$regex': type_or_name}})
-                for template_ in await results.to_list(length=MAX_POSSIBLE_TEMPLATES):
-                    match_list += [template_["name"]]
+                for form in await results.to_list(length=MAX_POSSIBLE_TEMPLATES):
+                    match_list += [form["name"]]
 
         return _find_max(match_list)
 

@@ -3,9 +3,13 @@ import asyncio
 import uuid
 
 
-templates = [
+def _gen_name() -> str:
+    yield str(uuid.uuid4())
+
+
+forms = [
     {
-        "name": str(uuid.uuid4()),
+        "name": _gen_name(),
         "field_1": "email",
         "field_2": "phone",
         "field_3": "text",
@@ -13,17 +17,17 @@ templates = [
         "field_5": "date"
     },
     {
-        "name": str(uuid.uuid4()),
+        "name": _gen_name(),
         "foo": "phone",
         "bar": "text"
     },
     {
-        "name": "some_name_1",
+        "name": _gen_name(),
         "owner_email": "email",
         "customer_phone": "phone"
     },
     {
-        "name": "some_name_2",
+        "name": _gen_name(),
         "owner_email": "email",
         "order_date": "date"
     }
@@ -31,10 +35,11 @@ templates = [
 
 
 async def insert():
-    for template in templates:
-        await session.do_insert(template)
+    for form in forms:
+        await session.do_insert(form)
 
 
 if __name__ == "__main__":
     asyncio.run(insert())
+    print("Done!!!")
     exit()
