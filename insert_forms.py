@@ -4,7 +4,7 @@ import uuid
 
 
 def _gen_name() -> str:
-    yield str(uuid.uuid4())
+    return str(uuid.uuid4())
 
 
 forms = [
