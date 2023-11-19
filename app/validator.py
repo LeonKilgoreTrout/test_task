@@ -63,3 +63,6 @@ class Validator:
         length = len(phone) == 12
         statements = (startswith, isdigit, length)
         return all(statements)
+
+
+validator = Validator()

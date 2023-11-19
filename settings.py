@@ -35,6 +35,7 @@ class MongoSettings(BaseSettings):
 class Settings(BaseSettings):
     app_description: Dict = AppDescription().model_dump()
     mongo: InstanceOf[MongoSettings] = MongoSettings()
+    MAX_POSSIBLE_TEMPLATES: int = 10
 
 
 settings = Settings()

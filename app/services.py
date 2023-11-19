@@ -4,7 +4,7 @@ from app.database import session
 from dataclasses import dataclass
 from uuid import uuid4
 from collections import OrderedDict
-from app.validator import Validator, ValidatedStr
+from app.validator import validator, ValidatedStr
 
 
 @dataclass
@@ -38,54 +38,41 @@ def parse_string(input_string: str) -> List[str]:
     return params_list
 
 
-class Connector:
+def _compose_dict(fields_: List[Field]) -> OrderedDict:
+    ordered_dict = {field_.name: field_.type_ for field_ in sorted(fields_, key=lambda x: x.name)}
+    return OrderedDict(
+        **ordered_dict
+    )
 
-    def __init__(self):
-        self.session = session
-        self.validator = Validator()
-        self.last_form = None
 
-    async def match_template_in_db(self, params_list: List[str]) -> Dict[str, ValidatedStr | str | Dict]:
-        fields = []
-        for params in params_list:
-            try:
-                name, value = _validate_params(params)
-            except ValidatorException as e:
-                return {
-                    "err": {
-                        "type": e.__class__.__name__,
-                        "text": e.__doc__
-                    }
-                }
-
-            type_ = self.validator.validate(value)
-            form_field = Field(name=name, type_=type_)
-            fields.append(form_field)
-        fields = self._compose_dict(fields)
-        db_result = await self.get_template(fields)
-        if db_result is not None:
+def _validate(params_list: List[str]) -> List[Field] | Dict:
+    fields = []
+    for params in params_list:
+        try:
+            name, value = _validate_params(params)
+        except ValidatorException as e:
             return {
-                "template_name": db_result["name"]
+                "err": {
+                    "type": e.__class__.__name__,
+                    "text": e.__doc__
+                }
             }
+        type_ = validator.validate(value)
+        form_field = Field(name=name, type_=type_)
+        fields.append(form_field)
+    return fields
+
+
+async def match_template_in_db(params_list: List[str]) -> Dict[str, ValidatedStr | Dict | List]:
+
+    fields = _validate(params_list)
+    if isinstance(fields, Dict):
         return fields
-
-    @staticmethod
-    def _compose_dict(fields_) -> OrderedDict:
-        ordered_dict = {field_.name: field_.type_ for field_ in sorted(fields_, key=lambda x: x.name)}
-        return OrderedDict(
-            **ordered_dict
-        )
-
-    async def add_template(self, fields: OrderedDict[str, ValidatedStr]):
-        form = {
-            "name": str(uuid4()),
-            **fields
+    fields_dict = _compose_dict(fields)
+    db_result = await session.find_all(fields_dict)
+    if db_result is not None:
+        return {
+            "template_names": db_result
         }
-        await self.session._do_insert(form)
-
-    async def get_template(self, fields: Dict[str, str]) -> Dict[str, str] | None:
-        result = await self.session._find_one(fields)
-        return result
-
-
-connector = Connector()
+    else:
+        return fields_dict

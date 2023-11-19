@@ -16,13 +16,23 @@ templates = [
         "name": str(uuid.uuid4()),
         "foo": "phone",
         "bar": "text"
+    },
+    {
+        "name": "some_name_1",
+        "owner_email": "email",
+        "customer_phone": "phone"
+    },
+    {
+        "name": "some_name_2",
+        "owner_email": "email",
+        "order_date": "date"
     }
 ]
 
 
 async def insert():
     for template in templates:
-        await session._do_insert(template)
+        await session.do_insert(template)
 
 
 if __name__ == "__main__":
