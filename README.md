@@ -11,10 +11,11 @@
 ``` pip install -r requirements.txt ```
 4) прогнать тесты если необходимо командой ```pytest```
 5) запустить апи командой
-``` uvicorn app.main:app```
+``` uvicorn app.main:app ```
 
 ### запуск с Docker
 Находясь в корне проекта, выполнить команды
+
 1) 
 ```
 docker build . --no-cache
