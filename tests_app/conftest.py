@@ -1,7 +1,7 @@
 import pytest
 from app.database import session
 import asyncio
-from insert_templates import insert
+from insert_forms import insert
 
 
 @pytest.fixture(scope="session")
