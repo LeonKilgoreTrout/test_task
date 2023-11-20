@@ -30,6 +30,7 @@ class Session:
 
     def drop(self):
         self.collection.delete_many({})
+        log(f"Collection `{self.collection_name}` has been cleared")
 
     async def do_insert(self, form: Dict) -> None:
         await self.collection.insert_one(form)
@@ -42,7 +43,10 @@ class Session:
                 results = self.collection.find({field_: {'$regex': type_or_name}})
                 for form in await results.to_list(length=MAX_POSSIBLE_TEMPLATES):
                     match_list += [form["name"]]
-
+        if len(match_list):
+            log(f"Templates found in `{self.collection_name}` collection")
+        else:
+            log(f"Templates not found in `{self.collection_name}` collection")
         return _find_max(match_list)
 
 

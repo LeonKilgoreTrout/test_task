@@ -1,16 +1,10 @@
 from loguru import logger
 import sys
-from typing import Any, Dict
 from time import time
 
 
 config = {
     "handlers": [
-        # {
-        #     "sink": "../logs/logs.log",
-        #     "format": "{message}",
-        #     "rotation": "5 MB"
-        # },
         {
             "sink": sys.stdout,
             "format": "{message}"

@@ -17,6 +17,7 @@ class AppDescription(BaseSettings):
     openapi_tags: List[InstanceOf[Tag]] = [
         Tag(name="Forms", description="Forms endpoints")
     ]
+    swagger_ui_parameters: Dict[str, int] = {"defaultModelsExpandDepth": -1}
 
 
 class MongoSettings(BaseSettings):
